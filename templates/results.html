@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="The Marvel Recommendation Engine recommends comics for you, be it Spider-Man, Wolverine, The Avengers, Iron-Man, Hulk or the X-men..." />
+        <meta name="keywords" content="Spider-Man, Wolverine, The Avengers, X-men, Captain America, Iron-Man, Hulk" />
+        <link type="text/css" rel="stylesheet" href="stylsheet3.css"/>
+        <title>RESULTS</title>
+		<link rel="icon" type="image/ico" href="favicon.ico"/>
+		<link rel="canonical" href="http://www.underminer.net" />
+        <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
+        <script type='text/javascript' src="spin.js"></script>
+        <script type=text/javascript src="{{ url_for('static', filename='svg.js') }}"></script>
+        <script type='text/javascript' src="script2.js"></script>
+        <script>
+            $(document).ready(function() {
+                var opts = {
+                    lines: 17, // The number of lines to draw
+                    length: 30, // The length of each line
+                    width: 12, // The line thickness
+                    radius: 54, // The radius of the inner circle
+                    corners: 1, // Corner roundness (0..1)
+                    rotate: 0, // The rotation offset
+                    direction: 1, // 1: clockwise, -1: counterclockwise
+                    color: '#000', // #rgb or #rrggbb or array of colors
+                    speed: 1, // Rounds per second
+                    trail: 52, // Afterglow percentage
+                    shadow: true, // Whether to render a shadow
+                    hwaccel: false, // Whether to use hardware acceleration
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    position: "fixed",
+                    zIndex: 7, // The z-index (defaults to 2000000000)
+                    top: '50%', // Top position relative to parent
+                    left: '50%' // Left position relative to parent
+                };
+                $(".header img, h1, .thumbnails_results, #search_submit" ).click(function(){
+                            $('.loader, .loader_text_background').delay(2000).fadeIn(500);
+                            var target = document.getElementById('spinner');
+                            var spinner = new Spinner(opts).spin(target);
+                            spin().delay(500).fadeIn(500);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="spinner"></div>
+        <div class="loader" style="display:none;"></div>
+        <div class="loader_text_background" style="display:none;"><span class ="loader_text">LOADING RECOMMENDATIONS</span></div>
+        <div class="container">
+		    <div id="fb-root"></div>
+                <script>(function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=137591413005915&version=v2.0";
+                    fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));</script>
+		    <div class="eraser"></div>
+	        <div class="header">
+	    	    <a href="/uat"><div id="logo"></div>
+	            <h1>RECOMMENDATION ENGINE</h1></a>
+	            <form class="search" action="search">
+                    <label id="search_series">SERIES</label><input type="text" id="series_input" name="series" placeholder="e.g. Uncanny X-men">
+                    <label id="search_issue">ISSUE#</label><input type="text" name="issue" placeholder="42">
+                    <input id='search_submit' type="image" src="search_icon_25x25_px.png">
+                </form>
+                <script>
+                    $("#series_input").autocomplete({
+                        source: "http://www.underminer.net/autofill",
+                        autoFocus: "true",
+                        minLength: 4,
+                        appendTo: "#autocomplete_results"
+                    });
+                </script>
+                <div class="fb-like" data-href="http://www.underminer.net" data-colorscheme="dark" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+	        </div>
+	        <div class ="lenia_top">
+	            <img src="/diagonal_lines_1024x6_px.png"/>
+	        </div>
+	        <div class="middle_results">
+	            <div id="autocomplete_results"></div>
+	            <div id="results_header"><span id="search_title_bold">{{ series_search.upper() }} {{ issue_search }}</span> IS FEATURED IN {{ decide }} SERIES. WHICH ONE DID YOU MEAN?</div>
+	            <div class="image-container-middle-l_results">
+                    {% for i in thumbnail_list %}
+                    <a class="thumbnails_results" href="/recommendation?l={{ id_original_list[thumbnail_list.index(i)] }}">
+                    <div class="effekt_results"></div>
+                    <p class="tooltip_results">{{ comic_series_list[thumbnail_list.index(i)] }}</p>
+	        	    <div class="issue_nr_results"><span class="issue_title_results">Issue</span><br>#{{ issue_number_list[thumbnail_list.index(i)] }}</div>
+	        	    <div class="publication_date_results"><span class="publication_title_results"><br>Publication date</span><br>{{ publication_date_list[thumbnail_list.index(i)] }}</div>
+	        	    <img src="{{ i }}" alt="Buy the digital issue from Marvel!" title="Buy the digital issue from Marvel!"/>
+	        	    </a>
+	    	        {% endfor %}
+	    	    </div>
+	    	</div>
+	    	<div class="footer-line">
+	    	        <img src="/diagonal_lines_1024x6_px.png">
+	    	</div>
+	  	    <div class="footer">
+	                <p>&#169 2014 <a href="mailto:balazs.krich@gmail.com?Subject=Marvel%20Recommendation%20Engine" target="_top">Balazs Krich</a>. Design: Gabor Karacsony; Kudos: Daniel Molnar.
+	                Data provided by Marvel. &#169 2014 <a href="http://developer.marvel.com/">Marvel</a></p>
+            </div>
+        </div>
+    </body>
+</html>

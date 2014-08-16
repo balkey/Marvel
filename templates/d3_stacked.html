@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<link href="/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+<style>
+
+@font-face
+{
+font-family: TradeGothicLTStd-Light;
+    src: url("TradeGothicLTStd-Light.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Bold;
+    src: url("TradeGothicLTStd-Bold.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Cn18;
+    src: url("TradeGothicLTStd-Cn18.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-BoldObl;
+    src: url("TradeGothicLTStd-BoldObl.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Bd2;
+    src: url("TradeGothicLTStd-Bd2.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Cn180bl;
+src: url("TradeGothicLTStd-Cn18Obl.otf");
+}
+
+body {
+  overflow-y:scroll;
+}
+
+#chart_right{
+    float: left;
+    width: 1000px;
+    height: 650px;
+}
+
+.sidebar {
+    width: 250px;
+    height: 350px;
+    float: left;
+    margin-right: 10px;
+}
+
+#chart_title {
+    font-family: TradeGothicLTStd-Bold;
+    font-size: 24px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+#chart_description {
+    font-size: 16px;
+    font-family: TradeGothicLTStd-Light;
+    color: black;
+    text-align: justify;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+#bold {
+    font-family: TradeGothicLTStd-BoldObl;
+}
+
+#bold2 {
+    font-family: TradeGothicLTStd-Bold;
+    font-size: 14px;
+}
+
+.nv-legend-text {
+    font-family: TradeGothicLTStd-Cn18;
+    font-size: 16px;
+}
+
+.search {
+    float: left;
+    width: 250px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+
+input[type=image] {
+    float: left;
+    height: 35px;
+    margin-left: 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    outline: none;
+    margin-top: -1px;
+    border-radius: 0px;
+    margin-bottom: 10px;
+}
+
+input[type=text][name=series] {
+    width: 180px;
+    padding-top:3px;
+    padding-left: 5px;
+    margin-left: 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 1px;
+    float: left;
+    background-color: #d6d6d6;
+    height: 29px;
+    color: #9d9f9f;
+    font-size: 12px;
+    outline: none;
+    border: none;
+    font-family: TradeGothicLTStd-Bd2;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.9);
+    margin-bottom: 10px;
+}
+
+input[type=text]:focus {
+    outline: none;
+    background-color: #ffffff;
+}
+
+#autocomplete_results {
+    width: 0px;
+    height: 0px;
+    float: left;
+}
+
+.ui-helper-hidden-accessible {
+    display:none;
+}
+
+.ui-autocomplete {
+    background-color: #ffffff;
+    border: 1px solid #b6b6b6;
+    z-index: 40;
+    width: 179px;
+    max-height: 170px;
+    padding: 4px 0px 4px 4px;
+    font-family: TradeGothicLTStd-Bd2;
+    color: #616363;
+    font-size: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    opacity: 1;
+    box-shadow: 6px 6px 8px rgba(0,0,0,0.75);
+}
+
+.ui-menu-item {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.ui-state-focus {
+    background-color: #616363;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 3px;
+    padding-left: 2px;
+    color: #ffffff;
+    cursor:pointer;
+    cursor:hand;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    font-family: TradeGothicLTStd-Cn180bl;
+    color: #9d9f9f;
+    font-size: 14px;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    opacity:  1;
+    font-family: TradeGothicLTStd-Cn180bl;
+    color: #9d9f9f;
+    font-size: 14px;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    opacity:  1;
+    font-family: TradeGothicLTStd-Cn180bl;
+    color: #9d9f9f;
+    font-size: 14px;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    font-family: TradeGothicLTStd-Cn180bl;
+    color: #9d9f9f;
+    font-size: 14px;
+}
+
+.nv-axislabel {
+    font-size: 20px;
+    font-family: TradeGothicLTStd-Bold;
+}
+
+.remove-word {
+    fill: #ffffff;
+}
+
+.delete-word {
+    font-family: TradeGothicLTStd-Bold;
+}
+
+
+    </style>
+    <body class='with-3d-shadow with-transitions'>
+
+        <div class=sidebar>
+            <div id="chart_title">Word occurances per chapter</div>
+            <div id="chart_description">The chart shows the occurances of words <span id="bold">(x)</span> for each chapter <span id="bold">(y)</span>.</div>
+            <form class="search" action="">
+                <input type="text" id="series_input" name="series" placeholder="e.g. Love">
+                <input id='search_submit' type="image" src="/img/search.png">
+            </form>
+            <div id="chart_description">Use the input field to add more words - the autocomplete function will recommend all words present in the text for you after you start typing.</div>
+            <div id="chart_description">You can also remove words by doubleclicking over the legend of each word. With a single click, you will highlight the given word.</div>
+	        <div id=chart_title>Words</div>
+            <svg id=legend_svg></svg>
+        </div>
+        <div id=chart_right>
+            <svg id="chart1"></svg>
+        </div>
+        <div id="autocomplete_results"></div>
+<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="/nv.d3.js"></script>
+<script src="/src/utils.js"></script>
+<script src="/src/tooltip.js"></script>
+<script src="/src/interactiveLayer.js"></script>
+<script src="/src/models/legend.js"></script>
+<script src="/src/models/axis.js"></script>
+<script src="/src/models/scatter.js"></script>
+<script src="/src/models/stackedArea.js"></script>
+<script src="/src/models/stackedAreaChart.js"></script>
+<script src="/d3/data.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
+<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+<script>
+$(document).ready(function(){
+
+    $("#series_input").autocomplete({
+        source: "http://www.underminer.net/words",
+        autoFocus: "true",
+        autoSelect: "true",
+        minLength: 1,
+        change: function(event,ui) {
+            if (ui.item==null) {
+                $("#series_input").val('');
+                $("#series_input").focus();
+            }
+        }
+        //appendTo: "#autocomplete_results",
+    });
+
+    $(".search").validate({
+        errorClass: "wrong",
+        rules: {
+            series: {
+                required:true }
+        },
+        messages :{
+            series : {
+                required: 'Please name a series!'
+                }
+        },
+        submitHandler: function(form) {
+            $.getJSON($SCRIPT_ROOT + '/words_update', {
+                a: $("#series_input").val()
+            }, function(data) {
+                var result_resp = data,
+                    bjoriginal = histcatexplong;
+                    bjoriginal.push(result_resp);
+                    d3.select('#chart1')
+                        .datum(histcatexplong)
+                        .transition().duration(1000)
+                        .call(chart);
+                    $("#series_input").val('');
+                });
+        },
+        errorPlacement: function(error, element) {
+            error.appendTo( element.parent("td").next("td") );
+        }
+    });
+});
+
+/*
+.map(function(series) {
+  series.values = series.values.map(function(d) {
+    return { x: d[0], y: d[1] }
+  });
+  return series;
+});
+*/
+
+//an example of harmonizing colors between visualizations
+//observe that Consumer Discretionary and Consumer Staples have
+//been flipped in the second chart
+var test_colors = [
+    "#f28d2f",
+    "#fdc185",
+    "#fddb61",
+    "#667f6a",
+    "#57af66",
+    "#cbffd4",
+    "#3d797f",
+    "#60c0ca",
+    "#91E8E8",
+    "#c4c1ba"
+];
+
+nums = [1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+];
+
+var colors = d3.scale.ordinal()
+    .range(test_colors)
+    .domain(nums);
+function keyColor(d, i) {return colors(d.key)};
+
+var chart;
+nv.addGraph(function() {
+  chart = nv.models.stackedAreaChart()
+                //.width(600).height(500)
+                .useInteractiveGuideline(true)
+                .x(function(d) { return d[0] })
+                .y(function(d) { return d[1] })
+                .color(keyColor)
+                .transitionDuration(300);
+                //.clipEdge(true);
+
+// chart.stacked.scatter.clipVoronoi(false);
+
+
+  d3.select('#chart1')
+    .datum(histcatexplong)
+    .transition().duration(1000)
+    .call(chart)
+    // .transition().duration(0)
+    .each('start', function() {
+        setTimeout(function() {
+            d3.selectAll('#chart1 *').each(function() {
+              console.log('start',this.__transition__, this)
+              // while(this.__transition__)
+              if(this.__transition__)
+                this.__transition__.duration = 1;
+            })
+          }, 0)
+      })
+     /*.each('end', function() {
+             d3.selectAll('#chart1 *').each(function() {
+               console.log('end', this.__transition__, this)
+               // while(this.__transition__)
+               if(this.__transition__)
+                 this.__transition__.duration = 200;
+             })});*/
+
+    nv.utils.windowResize(chart.update);
+
+    // chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+    return chart;
+    });
+        </script>
+    </body>
+</html>

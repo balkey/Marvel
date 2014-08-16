@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="The Marvel Recommendation Engine recommends comics for you, be it Spider-Man, Wolverine, The Avengers, Iron-Man, Hulk or the X-men..." />
+        <meta name="keywords" content="Spider-Man, Wolverine, The Avengers, X-men, Captain America, Iron-Man, Hulk" />
+        <link type="text/css" rel="stylesheet" href="stylesheet2.css"/>
+        <title>Marvel Reccomendation Engine</title>
+		<link rel="icon" type="image/ico" href="favicon.ico"/>
+		<link rel="canonical" href="http://www.underminer.net" />
+		<script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-50632325-1', 'underminer.net');
+            ga('send', 'pageview');
+        </script>
+        <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script type='text/javascript' src="script.js"></script>
+    </head>
+   <body>
+        <div class="container">
+		    <div id="fb-root"></div>
+                <script>(function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=137591413005915&version=v2.0";
+                    fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));</script>
+		    <div class="eraser"></div>
+	        <div class="header">
+	    	    <a href="/"><img src="/Marvel_logo_175x79_px.png" title="Hit me for another random Marvel comic!"/>
+	            <h1>RECOMMENDATION ENGINE</h1></a>
+	            <button type="button" class="button_boot">
+                    <span id="first" class="menu_bar"></span>
+                    <span id="second" class="menu_bar"></span>
+                    <span id="third" class="menu_bar"></span>
+                </button>
+	        </div>
+	        <div class ="lenia_top">
+	            <img src="/diagonal_lines_1024x6_px.png"/>
+	        </div>
+	        <div class="middle">
+	            <div class="image-container-middle-l">
+	                {% if digital_id != 0 %}
+                        <a href="{{ link }}" target="_blank"><img src="{{ thumbnail }}" alt="Buy the digital issue from Marvel!" title="Buy the digital issue from Marvel!"/></a>
+    	    		{% else %}
+    	    		    <a href="{{ link }}" target="_blank"><img src="{{ thumbnail }}" alt="Check it out on Marvel!" title="Check it out on Marvel!"/></a>
+	    	        {% endif %}
+	    	        {% if digital_id != 0 %}
+	    	        <a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">BUY THE DIGITAL ISSUE!</span></p></div></a>
+    	    		    {% else %}
+    	    		<a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">SEE IT ON MARVEL!</span></p></div></a>
+	    	            {% endif %}
+	    	    </div>
+	    	    <div class="text-container-middle-center">
+	    	        <h2>{{ comic_series }} #{{ issue_number }}</h2>
+	    	        <br>
+	    	        <div class="fb-like" data-href="http://www.underminer.net" data-colorscheme="light" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+	    	        <br><br><br>
+	    	        <h3>PUBLISHED:</h3>
+	    	        <h4>{{ publication_date }}</h4>
+	    	        <br><br>
+	    	        <h3>FEATURING:</h3>
+                    <h4>{% for character in character_list[:-1] %}
+	        	            {{ character }},
+	        	        {% endfor %}
+	        	        {{ character_list[-1] }}</h4>
+	    	        <br><br>
+	    	        <h3>DESCRIPTION:</h3>
+	    	        <h5><span class="more">{{ description }}</span></h5>
+	    	        <br><br>
+	    	        <h3>ARTISTS:</h3>
+	    	        <h5>{% for keys in creator_dictionary %}
+	    	                {% if keys == "Unknown" %}
+	    	                    <p>Unknown</p>
+	        	            {% else %}
+	        	                <p><bolddal>{{ keys }}:</bolddal>
+	            	        {% for artists in creator_dictionary[keys][:-1] %}
+	            	            {{ artists }},
+	            	        {% endfor %}
+	        	            {{ creator_dictionary[keys][-1] }}</p>
+	        	            {% endif %}
+	        	        {% endfor %}</h5>
+	        	        {% if digital_id != 0 %}
+	    	        <a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">BUY THE DIGITAL ISSUE!</span></p></div></a>
+    	    		    {% else %}
+    	    		<a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">SEE IT ON MARVEL!</span></p></div></a>
+	    	            {% endif %}
+	    	    </div>
+	    	    <div class="image-container-middle-r">
+	    	        <div class="image-container-middle-r-inlet">
+	    		        {% for keys, values in reco_dictionary.iteritems() %}
+	        	        <a href="/recommendation?l={{ keys }}" class="thumbnails" title="{{ values[0] }}">
+	        	            <div class="issue_nr">#{{ values[2] }}</div>
+	        	            <img src="{{ values[1] }}/portrait_uncanny.jpg" alt="{{ values[0] }}"/></a>
+	        	        {% endfor %}
+	        	    </div>
+	    	    </div>
+	    	</div>
+	    	<div class="footer-line">
+	    	        <img src="/diagonal_lines_1024x6_px.png"/>
+	    	</div>
+	  	    <div class="footer">
+	                <p>&#169 2014 <a href="mailto:balazs.krich@gmail.com?Subject=Marvel%20Recommendation%20Engine" target="_top">Balazs Krich</a>. Design: Gabor Karacsony; Kudos: Daniel Molnar.
+	                Data provided by Marvel. &#169 2014 <a href="http://developer.marvel.com/">Marvel</a></p>
+            </div>
+        </div>
+    </body>
+</html>

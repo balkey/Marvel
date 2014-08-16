@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+ 	<head>
+        <script type=text/javascript src="{{ url_for('static', filename='svg.js') }}"></script>
+        <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style>
+@font-face
+{
+font-family: TradeGothicLTStd-Light;
+    src: url("TradeGothicLTStd-Light.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Bold;
+    src: url("TradeGothicLTStd-Bold.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-Cn18;
+    src: url("TradeGothicLTStd-Cn18.otf");
+}
+
+@font-face
+{
+font-family: TradeGothicLTStd-BoldObl;
+    src: url("TradeGothicLTStd-BoldObl.otf");
+}
+
+.bar:hover {
+  cursor:pointer;
+}
+
+.bar.active {
+    opacity: 1;
+}
+
+.bar.passive {
+    opacity: 0.3;
+}
+
+.bar {
+    opacity: 1;
+}
+
+.axis {
+  font-size: 14px;
+  font-family: TradeGothicLTStd-Light;
+  color: black;
+}
+
+.axis_text {
+    font-size: 20px;
+    font-family: TradeGothicLTStd-Bold;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.container {
+    display: inline-block;
+}
+
+.sidebar {
+    width: 250px;
+    float: left;
+}
+
+#chart_title {
+    font-family: TradeGothicLTStd-Bold;
+    font-size: 24px;
+    padding-left: 10px;
+}
+
+#chart_description {
+    font-size: 16px;
+    font-family: TradeGothicLTStd-Light;
+    color: black;
+    text-align: justify;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#bold {
+    font-family: TradeGothicLTStd-BoldObl;
+}
+
+#bold2 {
+    font-family: TradeGothicLTStd-Bold;
+    font-size: 14px;
+}
+
+.legend_row {
+    font-family: TradeGothicLTStd-Cn18;
+    font-size: 16px;
+    overflow: hidden;
+    width: 130px;
+    display: none;
+    margin-left: 5px;
+}
+
+.legend_active {
+    font-family: TradeGothicLTStd-Bold;
+    font-size: 16px;
+    color: white;
+    overflow: hidden;
+    width: 130px;
+    background: rgba(35,34,27,0.9);
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    margin-left: 5px;
+}
+
+.legend_active:before {
+	position: absolute;
+	content: '';
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(0,0,0,0)));
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:    -moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:     -ms-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:      -o-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+  	background-image:         linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	width: 130px;
+	height: 30px;
+	left: 14px;
+	border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+	margin-bottom: 5px;
+	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5);
+}
+
+.legend_color {
+    width: 20px;
+    height: 20px;
+    border: 1px solid gray;
+    float: left;
+    margin: 5px;
+}
+
+.legend_text {
+    padding-top: 9px;
+    float: left;
+}
+
+#noun {
+    background-color: #f28d2f;
+}
+
+#pronoun {
+    background-color: #fdc185;
+}
+
+#adjective {
+    background-color: #fddb61;
+}
+
+#verb {
+    background-color: #57af66;
+}
+
+#auxiliary_verb {
+    background-color: #000000;
+}
+
+#adverb {
+    background-color: #5d8989;
+}
+
+#preposition {
+    background-color: #60c0ca;
+}
+
+#conjuction {
+    background-color: #000000;
+}
+
+#interjection {
+    background-color: #000000;
+}
+
+#unknown {
+    background-color: #c4c1ba;
+}
+
+#chart_wrapper {
+    float: left;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.tooltip_chapter {
+    position: absolute;
+    background: rgba(35,34,27,0.9);
+    color: white;
+	font-weight: normal;
+	border: 1px solid rgba(0,0,0,.2);
+	padding: 8px 16px;
+    padding: 5px;
+    font-family: TradeGothicLTStd-Light;
+    font-size: 13px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    pointer-events: none;
+    -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+.tooltip_chapter:before {
+	position: absolute;
+	content: '';
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(0,0,0,0)));
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:    -moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:     -ms-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	background-image:      -o-linear-gradient(top, rgba(255,255,255,0.4), rgba(0,0,0,0));
+  	background-image:         linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(0,0,0,0));
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5);
+}
+</style>
+	</head>
+	<body>
+        <div class="container">
+            <div class="sidebar">
+                <div id=chart_title>Typical sentence length</div>
+                <p id="chart_description">The chart shows the average number of words <span id="bold">(x)</span> in a sentence for each chapter <span id="bold">(y)</span>.<br><br>Colors indicate the most common part of speech at the given word position.<br><br>Only those sentences are counted which have at least the average of the chapter's sentence length.</p>
+	            <div id=chart_title>Part of speech</div>
+	            <div class="legend">
+	                    <div class="legend_row" id="Noun"><div class="legend_color" id="noun"></div><span class="legend_text">Noun</span></div>
+	                    <div class="legend_row" id="Pronoun"><div class="legend_color" id="pronoun"></div><span class="legend_text">Pronoun</span></div>
+                        <div class="legend_row" id="Adjective"><div class="legend_color" id="adjective"></div><span class="legend_text">Adjective</span></div>
+                        <div class="legend_row" id="Verb"><div class="legend_color" id="verb"></div><span class="legend_text">Verb</span></div>
+                        <div class="legend_row" id="Auxiliary-verb"><div class="legend_color" id="auxiliary_verb"></div><span class="legend_text">Auxiliary-verb</span></div>
+                        <div class="legend_row" id="Adverb"><div class="legend_color" id="adverb"></div><span class="legend_text">Adverb</span></div>
+                        <div class="legend_row" id="Preposition"><div class="legend_color" id="preposition"></div><span class="legend_text">Preposition</span></div>
+                        <div class="legend_row" id="Conjuction"><div class="legend_color" id="conjuction"></div><span class="legend_text">Conjuction</span></div>
+                        <div class="legend_row" id="Interjection"><div class="legend_color" id="interjection"></div><span class="legend_text">Interjection</span></div>
+                        <div class="legend_row" id="Unknown"><div class="legend_color" id="unknown"></div><span class="legend_text">Unknown</span></div>
+	            </div>
+	        </div>
+	        <div id="chart_wrapper"></div>
+	    </div>
+	</body>
+	<script>
+	    history.navigationMode = 'compatible';
+        $(document).ready(function() {
+
+            var timeoutId;
+
+            var margin = {top: 60, right: 20, bottom: 20, left: 60},
+                width = 1000 - margin.left - margin.right,
+                height = 650 - margin.top - margin.bottom;
+
+            var colors = {
+                Noun: "#f28d2f",
+                Pronoun: "#fdc185",
+                Adjective: "#fddb61",
+                Verb: "#57af66",
+                Auxiliary_verb: "#667f6a",
+                Adverb: "#5d8989",
+                Preposition: "#60c0ca",
+                Conjuction: "#3d797f",
+                Interjection: "#8acccc",
+                Unknown: "#c4c1ba"
+            };
+
+            var svg = d3.select("#chart_wrapper").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .attr("id", "chart")
+                .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                    .attr("id", "general");
+
+            svg.append("g")
+                .attr("class", "background_group")
+                    .append("rect")
+                        .attr("class", "background")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("fill", "#d4d4d4")
+                        .attr({"rx": "5", "ry": "5"})
+                        .attr("transform", "translate(" + (-margin.left) + "," + (-margin.top) + ")")
+                        .style("opacity", "0.4");
+
+            var tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip_chapter")
+                .style("opacity", 0);
+
+
+
+            //Drop shadow for hover
+
+            var defs = svg.append("defs");
+
+            var filter = defs.append("filter")
+                .attr("id", "drop-shadow")
+                .attr("height", "130%")
+                .attr("width", "180%");
+
+
+            filter.append("feGaussianBlur")
+                .attr("in", "SourceAlpha")
+                .attr("stdDeviation", 1.4)
+                .attr("result", "blur");
+
+            filter.append("feOffset")
+                .attr("in", "blur")
+                .attr("dx", 2.5)
+                .attr("dy", 2.5)
+                .attr("result", "offsetBlur");
+
+            var feMerge = filter.append("feMerge");
+
+            feMerge.append("feMergeNode")
+                .attr("in", "offsetBlur")
+            feMerge.append("feMergeNode")
+                .attr("in", "SourceGraphic");
+
+            //Drop shadow for hover end
+
+            d3.tsv("/d3/alice_speech.tsv", type, function(error, data) {
+
+                var number_of_chapters = d3.max(data, function(d) { return d.CHAPTER; });
+
+                if (number_of_chapters < 41) {
+                    var chaptertext = number_of_chapters;
+                }
+                else {
+                    var chaptertext = number_of_chapters / 2;
+                }
+
+                var max_words = d3.max(data, function(d) { return d.WORD_POSITION; });
+
+                var x = d3.scale.ordinal()
+                    .domain(data.map(function(d) { return d.WORD_POSITION; }))
+                    .rangeRoundBands([0, width]);
+
+                var y = d3.scale.linear()
+                    .domain([1, d3.max(data, function(d) { return d.CHAPTER; })+1])
+                    .range([0, height]);
+
+                var yb = d3.scale.linear()
+                    .domain([1, number_of_chapters])
+                    .range([(height/number_of_chapters)/2, height-((height/number_of_chapters)/2)]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("top");
+
+                var yAxis = d3.svg.axis()
+                    .orient("left")
+
+                var bar_width = (height / number_of_chapters)-(height / number_of_chapters)/100*20;
+
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0, 0)")
+                    .call(xAxis)
+                .append("text")
+                    .attr("class", "axis_text")
+                    .attr("transform", "translate("+((width/2)-210)+", -35)")
+                    .text("Number of words / average sentence / chapter");
+
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(0,0)")
+                        .call(yAxis.scale(y).ticks(0).tickSize(0))
+                    .append("text")
+                        .attr({"transform": "rotate(-90), translate("+((-height/2)-16)+",-35)"})
+                        .attr("class", "axis_text")
+                        .text("Chapters");
+
+                svg.append("g")
+                    .attr("class", "centered_text_y axis")
+                    .call(yAxis.scale(yb).ticks(chaptertext).tickSize(5));
+
+                svg.select(".background_group").selectAll("rect")
+                        .data(d3.range((number_of_chapters/2)+1))
+                    .enter().append("rect")
+                        .attr("class", "background_grid")
+                        .attr("height", function (d) {return height / number_of_chapters })
+                        .attr("width", function (d) {return width;})
+                        .attr("y", function (d) {return (d-1) * height*2 / number_of_chapters })
+                        .style({"fill": "grey", "opacity": "0.2"})
+                        .style("filter", "url(#drop-shadow)");
+
+                svg.select(".background_group").selectAll("line")
+                        .data(d3.range(number_of_chapters))
+                    .enter().append("line")
+                        .attr("class", "background_line")
+                        .attr("y1", function (d) {return d * height / number_of_chapters })
+                        .attr("y2", function (d) {return d * height / number_of_chapters })
+                        .attr("x1", function (d) {return 0;})
+                        .attr("x2", function (d) {return width;})
+                        .style("stroke", "grey");
+
+                $.fn.exists = function () {
+                    return this.length !== 0;
+                }
+
+                svg.selectAll(".bar")
+                        .data(data)
+                    .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("fill", function(d) { return colors[d.WINNER]; } )
+                        .attr("x", function(d) { return x(d.WORD_POSITION)+(width/max_words/2-(bar_width/2)); } )
+                        .attr("y", function(d) { return y(d.CHAPTER)+(height/number_of_chapters/2-(bar_width/2)); })
+                        .attr("height", bar_width)
+                        .attr("width", bar_width)
+                        .attr("kind", function(d) { return d.WINNER; })
+                        .attr("chapter", function(d) { return d.CHAPTER })
+                        .attr("word_pos", function(d) { return d.WORD_POSITION })
+                        .on("mouseover", function(d) {
+                            var current = d3.select(this);
+                            if (current.attr("class") === "bar") {
+                                current.attr({"stroke": "black", "stroke-width": "1"}).style("filter", "url(#drop-shadow)");
+                            }
+                            else if (current.attr("class") === "bar active") {
+                                tooltip.transition()
+                                .duration(200)
+                                .style("opacity", .9);
+                            tooltip .html("<span id='bold2'>Part of speech:</span> "+d.WINNER+"<br/>"+"<span id='bold2'>Chapter:</span> "+d.CHAPTER+"<br/>"+"<span id='bold2'>Word position:</span> "+d.WORD_POSITION)
+                                    .style("left", (d3.event.pageX + 20) + "px")
+                                    .style("top", (d3.event.pageY - 60) + "px");
+                            }
+                            var ez = d3.select(this).attr("kind"),
+                                chapter = d3.select(this).attr("chapter"),
+                                word_pos = d3.select(this).attr("word_pos"),
+                                nums_y = $('.centered_text_y g').eq(chapter-1).find('text'),
+                                nums_x = $('.x g').eq(word_pos-1).find('text'),
+                                legend_effekt = document.getElementById(ez);
+                            if (!timeoutId) {
+                                timeoutId = window.setTimeout(function() {
+                                    timeoutId = null;
+                                    $(legend_effekt).attr("class", "legend_active");
+                                    d3.selectAll(nums_y).style({"font-family": "TradeGothicLTStd-Bold", "font-size": "15px", "color": "#8989ff"}).attr("x", "-12");
+                                    d3.selectAll(nums_x).style({"font-family": "TradeGothicLTStd-Bold", "font-size": "15px"}).attr("y", "-13");
+                                }, 150);
+                            }
+                        })
+                        .on("click", function(d){
+                            tooltip.transition()
+                                .duration(200)
+                                .style("opacity", .9);
+                            tooltip .html("<span id='bold2'>Part of speech:</span> "+d.WINNER+"<br/>"+"<span id='bold2'>Chapter:</span> "+d.CHAPTER+"<br/>"+"<span id='bold2'>Word position:</span> "+d.WORD_POSITION)
+                                    .style("left", (d3.event.pageX + 20) + "px")
+                                    .style("top", (d3.event.pageY - 60) + "px");
+                            var current = $(this),
+                                part_of_speech = $(this).attr("kind");
+                            if (current.attr("class") !== "bar active") {
+                                d3.selectAll(".bar").each(function(d,i) {
+                                    var elt = d3.select(this)
+                                        if (elt.attr("kind") !== part_of_speech) {
+                                            elt.attr("class", "bar passive")
+                                            .attr("stroke", "none")
+                                            .style("filter", "");
+                                        }
+                                        else {
+                                            elt.attr("stroke", "black")
+                                            .attr("stroke-width", "1")
+                                            .attr("class", "bar active")
+                                            .style("filter", "url(#drop-shadow)");
+                                        }
+                                });
+                            }
+                            else if (current.attr("class") === "bar active") {
+                                d3.selectAll(".bar")
+                                .attr("class", "bar")
+                                .attr("stroke", "none")
+                                .style("filter", "");
+                                tooltip.transition()
+                                    .duration(250)
+                                    .style("opacity", 0);
+                            }
+                        })
+                        .on("mouseout", function() {
+                            var current = d3.select(this);
+                            if (current.attr("class") === "bar") {
+                                current.attr("stroke", "none").style("filter", "")
+                            }
+                            var ez = d3.select(this).attr("kind"),
+                                chapter = d3.select(this).attr("chapter"),
+                                word_pos = d3.select(this).attr("word_pos"),
+                                legend_effekt = document.getElementById(ez),
+                                nums_y = $('.centered_text_y g').eq(chapter-1).find('text'),
+                                nums_x = $('.x g').eq(word_pos-1).find('text');
+                            if (timeoutId) {
+                                window.clearTimeout(timeoutId);
+                                timeoutId = null;
+                            }
+                            else {
+                                $(legend_effekt).attr("class", "legend_row");
+                                d3.selectAll(nums_y).style({"font-family": "TradeGothicLTStd-Light", "font-size": "13px"}).attr("x", "-8");
+                                d3.selectAll(nums_x).style({"font-family": "TradeGothicLTStd-Light", "font-size": "13px"}).attr("y", "-9");
+                                 tooltip.transition()
+                                    .duration(500)
+                                    .style("opacity", 0);
+                            }
+                        });
+            });
+
+            Array.prototype.contains = function(v) {
+                for(var i = 0; i < this.length; i++) {
+                    if(this[i] === v) return true;
+                    }
+                    return false;
+            };
+
+            Array.prototype.unique = function() {
+                var arr = [];
+                for(var i = 0; i < this.length; i++) {
+                    if(!arr.contains(this[i])) {
+                        arr.push(this[i]);
+                    }
+                }
+                return arr;
+            };
+
+            $('.legend_row').hover( function(){
+                $(this).attr("class", "legend_active");
+                var part_of_speech = $(this).attr("id");
+                d3.selectAll(".bar").each(function(d,i) {
+                    var elt = d3.select(this);
+                    if (elt.attr("kind") !== part_of_speech) {
+                        elt.attr("class", "bar passive");
+
+                    }
+                    else {
+                        elt.attr({"class": "bar active","stroke": "black", "stroke-width": "1"}).style("filter", "url(#drop-shadow)");
+                    }
+                });
+            },
+            function(){
+                    $(this).attr("class", "legend_row");
+                    var bars = svg.selectAll(".bar");
+                    bars.attr({"class": "bar", "stroke": "none"}).style("filter", "");
+            });
+
+            $('.legend_row').click( function(){
+                $(this).attr("class", "legend_active");
+                var part_of_speech = $(this).attr("id");
+                d3.selectAll(".bar").each(function(d,i) {
+                    var elt = d3.select(this);
+                    if (elt.attr("kind") !== part_of_speech) {
+                        elt.attr("class", "bar passive");
+                    }
+                    else {
+                        elt.attr({"class": "bar active","stroke": "black", "stroke-width": "1"}).style("filter", "url(#drop-shadow)");
+                    }
+                });
+            });
+
+            $('.background_group').on("click", function(){
+                d3.selectAll(".bar").attr("class", "bar").attr("stroke", "none").style("filter", "");
+            });
+
+            function type(d) {
+                d.CHAPTER = +d.CHAPTER;
+                d.WORD_POSITION = +d.WORD_POSITION;
+                return d;
+            };
+        });
+        $(window).load(function() {
+	        setTimeout(function(){
+                var all_list = new Array;
+                d3.selectAll(".bar").each(function(d,i) {
+                    var element = d3.select(this);
+                    all_list.push(element.attr("kind"));
+                });
+                var unique_list = all_list.unique();
+                $('.legend_row').each(function(d,i) {
+                    var part_of_speech = $(this).attr("id");
+                    if ( $.inArray(part_of_speech, unique_list) > -1 ) {
+                        $(this).show();
+                    }
+                });
+            }, 300);
+        });
+        </script>
+</html>

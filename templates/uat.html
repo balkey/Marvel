@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="The Marvel Recommendation Engine recommends comics for you, be it Spider-Man, Wolverine, The Avengers, Iron-Man, Hulk or the X-men..." />
+        <meta name="keywords" content="Spider-Man, Wolverine, The Avengers, X-men, Captain America, Iron-Man, Hulk" />
+        <meta property="og:image" content="http://www.underminer.net/hulk_og.png"/>
+        <meta property="og:title" content="UAT | Marvel Recommendation Engine"/>
+        <meta property="og:url" content="http://www.underminer.net/uat"/>
+        <meta property="og:site_name" content="Marvel Recommendation Engine"/>
+        <link type="text/css" rel="stylesheet" href="stylsheet3.css"/>
+        <title>UAT | Marvel Recommendation Engine</title>
+		<link rel="icon" type="image/ico" href="favicon.ico"/>
+		<link rel="canonical" href="http://www.underminer.net"/>
+        <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script type=text/javascript src="{{ url_for('static', filename='svg.js') }}"></script>
+        <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
+        <script type='text/javascript' src="spin.js"></script>
+        <script type='text/javascript' src="script2.js"></script>
+    </head>
+    <body>
+        <div id="spinner"></div>
+        <div class="loader" style="display:none;"></div>
+        <div class="loader_text_background" style="display:none;"><span class ="loader_text">LOADING RECOMMENDATIONS</span></div>
+        <div class="container">
+            <div class="crowdsourcing_modal"></div>
+            <div class ="sendmail_modal_inlet">
+                <div class="sendmail_modal_inlet_header_layer">
+                    <div class="sendmail_modal_inlet_header">DROP US A LINE!</div>
+                </div>
+                <img id="superhero_mail" src="/img/supehero_mail.png">
+                <div id="contact_intro_layer">
+                    <div id="contact_intro">We would love to hear your feedback, so tell us what's on your mind! If you have cruel things to say, try to be nice about it! This is a hobby project!</div>
+                </div>
+                <form class="send_mail" action="">
+                    <div class="contact_wrapper_left">
+                        <label for="name" class="contact_label" style= "display: inline !important">Name*</label>
+                        <input type="text" id="name" name="name" autocomplete="off" class='valid'>
+                        <label for="email" class="contact_label" style= "display: inline !important">E-mail*</label>
+                        <input type="text" id="email" name="email" autocomplete="off" class='valid'>
+                        <label for="subject" class="contact_label" style= "display: inline !important">Subject</label>
+                        <input type="text" id="subject" name="subject" autocomplete="off">
+                        <label for="message" class="message_label"></label>
+                        <textarea type="text" id="message" name="message" placeholder="Your message...*" autocomplete="off" class='valid'></textarea>
+                    </div>
+                <div id="disclaimer">*Required fields</div>
+                <div id="cancel_contact">CANCEL</div>
+                <input type="submit" id="submit_contact" value="SEND">
+                </form>
+            </div>
+            <div class ="sendmail_modal_inlet_sent">
+                <div class="sendmail_modal_inlet_header_layer">
+                    <div class="crowdsourcing_modal_inlet_header_sent">Thank you for your feedback!</div>
+                </div>
+                <div id="contact_intro_sent">We will get back to you regarding your questions <br>or comments as soon as possible!</div>
+                <div id="cancel_contact_sent">CLOSE</div>
+            </div>
+            <div class ="crowdsourcing_modal_inlet">
+                <img id="superhero_add" src="/img/superhero_add.png">
+                <div class="crowdsourcing_modal_inlet_header_layer">
+                    <div class="crowdsourcing_modal_inlet_header">Add some more characters to this issue if<br>you think you know it better than Marvel!</div>
+                </div>
+                <div class="crowdsourcing_modal_chars">Characters already present in {{ comic_series }} #{{ issue_number }}:</div>
+                <div class="crowdsourcing_modal_chars_list">
+                    {% for character in character_list %}
+	        	            {{ character }},
+	        	        {% endfor %}
+                </div>
+                <div class="USG_modal_chars">Characters you've just added to this issue:</div>
+                <div class='added_character_wrapper'></div>
+                <form class="new_character" action="add_character">
+                    <label for="new_char_input" style="display: none"></label>
+                    <input type="textarea" id="new_char_input" name="new_char_input" placeholder="e.g. Captain America" onblur="this.placeholder = 'e.g. Captain America'" maxlength="60">
+                    <input type="submit" id="add_char_modal_plus" value="">
+                    <input type="image" id="plus" src="/img/plus-512.png">
+                    <input type="submit" id="add_char_modal" value="ADD">
+                </form>
+                <div class="disclaimer"><span id="disclaimer_bold">Please note:</span> you can add more than one character at a time. The autocomplete function will list the most popular superheroes and villains for you. In case you decide to add characters not present in the autocomplete results, please make sure to separate them with a coma! Your suggestions will be sent to Marvel for revision after clicking the 'Submit' button.</div>
+                <div id="disclaimer_post"><span id="disclaimer_bold">Please note:</span> now that you had added some characters, it's time to add some more! Or you can remove your earlier suggestions, if you made any typing errors or undesired recommendations. Anyhow, once you're ready, hit 'Submit' to send your revisions directly to Marvel. If you were accurate, you just contributed to the Marvel Universe, 'nuff said!</div>
+                <div id="cancel">CANCEL</div>
+                <div id="submit">SUBMIT</div>
+                <div id="test"></div>
+            </div>
+            <div id="fb-root"></div>
+                <script>(function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=137591413005915&version=v2.0";
+                    fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));
+                </script>
+		    <div class="eraser"></div>
+	        <div class="header">
+	    	    <a href="/uat"><div id="logo"></div>
+	            <h1>RECOMMENDATION ENGINE</h1></a>
+	            <button type="button" class="button_boot">
+                    <span id="first" class="menu_bar"></span>
+                    <span id="second" class="menu_bar"></span>
+                    <span id="third" class="menu_bar"></span>
+                </button>
+	            <form class="search" action="search">
+                    <label for="series_input" id="search_series" onfocus="this.value = this.value;">SERIES</label><input type="text" id="series_input" name="series" placeholder="e.g. Uncanny X-men">
+                    <label for="issue_input" id="search_issue">ISSUE#</label><input type="text" id="issue_input" name="issue" placeholder="42">
+                    <input id='search_submit' type="image" src="search_icon_25x25_px.png">
+                </form>
+                <div class="fb-like" data-href="http://www.underminer.net" data-colorscheme="dark" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+	            <div class="tooltip_logo2">Click for another random comic!</div>
+	        </div>
+	        <div class ="lenia_top">
+	            <img src="/diagonal_lines_1024x6_px.png"/>
+	        </div>
+	        <div class="middle">
+	            <div id="autocomplete_results"></div>
+	            <div id="character_results"></div>
+	            <div class="image-container-middle-l">
+	                {% if digital_id != 0 %}
+                        <a href="{{ link }}" target="_blank"><img id="picture_large" src="{{ thumbnail }}" alt="Buy the digital issue from Marvel!" title="Buy the digital issue from Marvel!"/></a>
+    	    		{% else %}
+    	    		    <a href="{{ link }}" target="_blank"><img id="picture_large" src="{{ thumbnail }}" alt="Check it out on Marvel!" title="Check it out on Marvel!"/></a>
+	    	        {% endif %}
+	    	        {% if digital_id != 0 %}
+	    	        <a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">BUY THE DIGITAL ISSUE!</span></p></div></a>
+    	    		    {% else %}
+    	    		<a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">SEE IT ON MARVEL!</span></p></div></a>
+	    	            {% endif %}
+	    	    </div>
+	    	    <div class="text-container-middle-center">
+	    	        <h2 id="series_issue">{{ comic_series }} #{{ issue_number }}</h2>
+	    	        <br><br>
+	    	        <h3>PUBLISHED</h3>
+	    	        <h4>{{ publication_date }}</h4>
+	    	        <br><br>
+	    	        <h3>FEATURING</h3>
+                    <h4>{% for character in character_list[:-1] %}
+	        	            {{ character }},
+	        	        {% endfor %}
+	        	        {{ character_list[-1] }}<span id="add_character">ADD MORE</span></h4>
+	        	        <div class="tooltip_add_character">Someone's missing?<br>Help us with your suggestions!</div>
+	    	        <br><br>
+	    	        <h3>DESCRIPTION</h3>
+	    	        <h5><span class="more">{{ description }}</span></h5>
+	    	        <br><br>
+	    	        <h3>ARTISTS</h3>
+	    	        <h5>{% for keys in creator_dictionary %}
+	    	                {% if keys == "Unknown" %}
+	    	                    <p>Unknown</p>
+	        	            {% else %}
+	        	                <p><bolddal>{{ keys }}:</bolddal>
+	            	        {% for artists in creator_dictionary[keys][:-1] %}
+	            	            {{ artists }},
+	            	        {% endfor %}
+	        	            {{ creator_dictionary[keys][-1] }}</p>
+	        	            {% endif %}
+	        	        {% endfor %}</h5>
+	        	        <!--{% if digital_id != 0 %}
+	    	        <a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">BUY THE DIGITAL ISSUE!</span></p></div></a>
+    	    		    {% else %}
+    	    		<a href="{{ link }}" target="_blank"><div id="button"><p><span class="text-button">SEE IT ON MARVEL!</span></p></div></a>
+	    	            {% endif %}-->
+	    	    </div>
+	    	    <div class="image-container-middle-r">
+	    	        {% if reco_count > 9 %}
+	    	        <div id="left_scroll">
+	    	            <div id="scroll_hover"></div>
+	    	            <img src="marvel_left_arrow.png">
+	    	        </div>
+	    	        {% endif %}
+	    	        <div class="image-container-middle-r-inlet">
+	    	            <div class="reco_header" value="{{ reco_count }}">
+	    	                <div id="red_square"></div>
+	    	                <p id="reco_header_text">RECOMMENDATIONS</p>
+	    	            </div>
+	    	            <ul id='carousel_ul'>
+	    	                <li id="1">
+	    		                {% for i in reco_ids[:9] %}
+                                    <a class="thumbnails" href="/recommendation?l={{ i }}">
+                                    <div class="effekt"></div>
+                                    {% if reco_dictionary.get(i)[0]|length >= 70 %}
+                                        <p class="tooltip">{{ reco_dictionary.get(i)[0][:67]+'...' }}</p>
+                                    {% else %}
+                                        <p class="tooltip">{{ reco_dictionary.get(i)[0] }}</p>
+                                    {% endif %}
+                                    <div class="issue_nr"><span class="issue_title">Issue</span><br>#{{ reco_dictionary.get(i)[2] }}</div>
+                                    <img src="{{ reco_dictionary.get(i)[1] }}/portrait_uncanny.jpg" alt="{{ reco_dictionary.get(i)[0] }}"/></a>
+	        	                {% endfor %}
+	        	            </li>
+	        	            {% if reco_count > 9 %}
+	        	            <li id="2">
+	    		                {% for i in reco_ids[9:18] %}
+                                    <a class="thumbnails" href="/recommendation?l={{ i }}">
+                                    <div class="effekt"></div>
+                                    <p class="tooltip">{{ reco_dictionary.get(i)[0] }}</p>
+                                    <div class="issue_nr"><span class="issue_title">Issue</span><br>#{{ reco_dictionary.get(i)[2] }}</div>
+                                    <img src="{{ reco_dictionary.get(i)[1] }}/portrait_uncanny.jpg" alt="{{ reco_dictionary.get(i)[0] }}"/></a>
+	        	                {% endfor %}
+	        	            </li>
+	        	            {% endif %}
+	        	            {% if reco_count > 18 %}
+	        	            <li id="3">
+	    		                {% for i in reco_ids[18:27] %}
+                                    <a class="thumbnails" href="/recommendation?l={{ i }}">
+                                    <div class="effekt"></div>
+                                    <p class="tooltip">{{ reco_dictionary.get(i)[0] }}</p>
+                                    <div class="issue_nr"><span class="issue_title">Issue</span><br>#{{ reco_dictionary.get(i)[2] }}</div>
+                                    <img src="{{ reco_dictionary.get(i)[1] }}/portrait_uncanny.jpg" alt="{{ reco_dictionary.get(i)[0] }}"/></a>
+	        	                {% endfor %}
+	        	            </li>
+	        	            {% endif %}
+	        	      </ul>
+	        	    </div>
+	        	    {% if reco_count > 9 %}
+	        	    <div id="right_scroll">
+	    	            <div id="scroll_hover"></div>
+	    	            <img src="marvel_right_arrow.png">
+	    	        </div>
+	        	    <div class="counter">
+	        	        <div id="count1"><img src="marvel_circle_on.png"></div>
+	        	        <div id="count2"><img src="marvel_circle_off.png"></div>
+	        	        {% if reco_count > 18 %}
+	        	        <div id="count3"><img src="marvel_circle_off.png"></div>
+	        	        {% endif %}
+	        	    </div>
+	        	    {% endif %}
+	    	    </div>
+	    	    <!--<div id="button_more"><p><span class="text-button">MORE</span></p></div>!-->
+	    	</div>
+	    	<div class="footer-line">
+	    	        <img src="/diagonal_lines_1024x6_px.png">
+	    	</div>
+	  	    <div class="footer">
+	                <p>&#169 2014 <span id="send_mail_to_author">Balazs Krich</span>. Design: Gabor Karacsony; Kudos: Daniel Molnar.
+	                Data provided by Marvel. &#169 2014 <a target="_blank" href="http://developer.marvel.com/">Marvel</a></p>
+            </div>
+        </div>
+    </body>
+</html>

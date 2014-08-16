@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+ 	<head>
+        <script type=text/javascript src="{{ url_for('static', filename='svg.js') }}"></script>
+        <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <style>
+            .menu_background {
+                background-color: #000000;
+                width: 120px;
+                height: 120px;
+                border: 1px solid red;
+                z-index: -10;
+                position: relative;
+            }
+
+            /*.box-shadow-menu {
+                position: relative;
+                padding-left: 75px;
+                border: 1px solid black
+                border-radius: 5px;
+                margin-top: -70px;
+                float: left;
+            }
+            .box-shadow-menu:before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 10px;
+                width: 60px;
+                height: 9px;
+                background: white;
+                box-shadow:
+                0 15px 0 0 white,
+                0 30px 0 0 white;
+            }*/
+
+            .chalk {
+                background-color: black;
+                width: 1024px;
+                height: 400px;
+                float: left;
+                opacity: 0.1;
+                display: none;
+            }
+            .button_boot {
+                color: #ffffff;
+                border: solid 1px #e6e6e6;
+                text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+                background-color: #0e0e0e;
+                background-image: linear-gradient(to bottom, #323232, #202020);
+                background-repeat: repeat-x;
+                border-top-color: rgba(0, 0, 0, 0.0980392);
+                border-right-color: rgba(0, 0, 0, 0.0980392);
+                border-bottom-color: rgba(0, 0, 0, 0.247059);
+                border-left-color: rgba(0, 0, 0, 0.0980392);
+                border-radius: 4px;
+                vertical-align: middle;
+                text-align: center;
+                cursor: pointer;
+                line-height: 20px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.15);
+                float: left;
+                position: absolute;
+                margin-top: -70px;
+                margin-left: 20px
+            }
+
+            .menu_bar {
+                display: block;
+                width: 29px;
+                height: 4px;
+                background-color: #f5f5f5;
+                border-radius: 1px;
+                box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+                margin-bottom: 6px;
+            }
+
+            #first {
+                margin-top: 6px;
+            }
+
+
+        </style>
+	</head>
+	<body>
+	<div id="drawing">
+	    <!--<div id='square' style='height: 40px; width: 40px; background-color: blue; margin-top: 100px; position: absolute; z-index: 1;'></div>-->
+	</div>
+	    <script>
+	    /*function move(elem) {
+                    var nnna = 10
+                    function frame() {
+                        nnna++  // update parameters
+                        elem.style.left = nnna + 'px' // show frame
+                        if (nnna == 500)  // check finish condition
+                            clearInterval(id)
+                    }
+                    var id = setInterval(frame, 0.1) // draw every 10ms
+                }*/
+
+
+            $(document).ready(function () {
+                var draw = SVG('drawing').size(175, 79);
+                draw.attr({
+                    width: "175",
+                    height: "79"
+                });
+
+                var white_back = draw.rect(175, 79);
+                white_back.attr({
+                    fill: "white"
+                });
+
+                var logo_letter = draw.path("M 294,400.5 C 310.5,401.5 309,422 309,422 C 306.5,442 294,441 294,441 L 294,400.5 z M 241,369 L 234,410.5 L 228,369 L 241,369 z M 114.5,329.5 L 114.5,465.5 L 145.5,465.5 L 156.5,408.5 L 169,465.5 L 199,465.5 L 199,343 L 218.5,465.5 L 249,465.5 L 268,343 L 268,465 L 308.5,465 C 308.5,465 322.5,462.5 329.5,443 L 326.5,465.5 L 351,465.5 L 362.5,395 L 374.5,465 L 443.5,465 L 443.5,439.5 L 423,439.5 L 423,411.5 L 442.5,411.5 L 442.5,383 L 423.5,383 L 423.5,357 L 443.5,357 L 443.5,329.5 L 399,329.5 L 399,460.5 L 376,329.5 L 348.5,329.5 L 334,416.5 C 334,416.5 331.5,392.5 318,381.5 L 335.5,329.5 L 311.5,329.5 L 294.5,375 L 294.5,329.5 L 246,329.5 L 243.5,342.5 L 225,342.5 L 221,329.5 L 175,329.5 L 175,379.5 L 163,329.5 L 150.5,329.5 L 139.5,379 L 139.5,330 L 114.5,329.5 z M 452.5,465.5 L 475.5,465.5 L 475.5,356.5 L 495,356.5 L 495,329 L 452.5,329 L 452.5,465.5 z");
+                logo_letter.attr({
+                    transform: "translate(-40,205) scale(0.42,-0.42)",
+                    fill: "black"
+                });
+
+                var mask = draw.mask();
+                mask.add(white_back);
+                mask.add(logo_letter);
+
+                var image1 = draw.image('/img/marvel_intro_01.jpg', 175, 79);
+                image1.attr({x: "0", y: "0", id: "img1"});
+                var image2 = draw.image('/img/marvel_intro_02.jpg', 175, 79);
+                image2.attr({x: "0", y: "0", id: "img2"});
+                var image3 = draw.image('/img/marvel_intro_03.jpg', 175, 79);
+                image3.attr({x: "0", y: "0", id: "img3"});
+                var image5 = draw.image('/img/marvel_intro_05.jpg', 175, 79);
+                image5.attr({x: "0", y: "0", id: "img5"});
+                var image6 = draw.image('/img/marvel_intro_06.jpg', 175, 79);
+                image6.attr({x: "0", y: "0", id: "img6"});
+                var image7 = draw.image('/img/marvel_intro_07.jpg', 175, 79);
+                image7.attr({x: "0", y: "0", id: "img7"});
+                var image8 = draw.image('/img/marvel_intro_08.jpg', 175, 79);
+                image8.attr({x: "0", y: "0", id: "img8"});
+                var image9 = draw.image('/img/marvel_intro_09.jpg', 175, 79);
+                image9.attr({x: "0", y: "0", id: "img9"});
+                var image10 = draw.image('/img/marvel_intro_10.jpg', 175, 79);
+                image10.attr({x: "0", y: "0", id: "img10"});
+
+                image1.hide();
+                image2.hide();
+                image3.hide();
+                image5.hide();
+                image6.hide();
+                image7.hide();
+                image8.hide();
+                image9.hide();
+                image10.hide();
+
+                $('#drawing').mouseenter(function(){
+                    $("#img1").delay(120).fadeIn(200, function() {$("#img1").hide();});
+                    $("#img2").delay(240).fadeIn(200, function() {$("#img2").hide();});
+                    $("#img3").delay(360).fadeIn(200, function() {$("#img3").hide();});
+                    $("#img5").delay(480).fadeIn(200, function() {$("#img5").hide();});
+                    $("#img6").delay(600).fadeIn(200, function() {$("#img6").hide();});
+                    $("#img7").delay(720).fadeIn(200, function() {$("#img7").hide();});
+                    $("#img8").delay(840).fadeIn(200, function() {$("#img8").hide();});
+                    $("#img9").delay(960).fadeIn(250, function() {$("#img9").hide();});
+                    $("#img10").delay(1100).fadeIn(300, function() {$("#img10").hide();});
+                });
+
+
+                /*$('#drawing').mouseout(function(){
+                    image1.hide();
+                    image2.hide();
+                    image3.hide();
+                    image4.hide();
+                    image5.hide();
+                    image6.hide();
+                    image7.hide();
+                    image8.hide();
+                    image9.hide();
+                    image10.hide();
+                });*/
+
+                var boundary = draw.rect(175, 79);
+                boundary.attr({
+                    x: "0",
+                    y: "0",
+                    fill: "#ea202d"
+                });
+
+                boundary.maskWith(mask);
+
+                //var rect = draw.rect(200, 240);
+                //var ellipse_top = draw.ellipse(200, 100);
+                //var ellipse_bottom = draw.ellipse(200, 100);
+
+                //group.add(rect)
+                //group.add(ellipse_top)
+                //group.add(ellipse_bottom)
+
+                /*ellipse_top.attr({
+                    stroke: 'black',
+                    'stroke-width': 3,
+                    'stroke-opacity': 0.2,
+                    fill: "transparent",
+                    cy: '61',
+                    cx: '110'
+                });
+
+                ellipse_bottom.attr({
+                    stroke: 'black',
+                    'stroke-width': 3,
+                    'fill-opacity': 0.1,
+                    'stroke-opacity': 0.2,
+                    cy: '200',
+                    cx: '110'
+                });
+
+                rect.attr({
+                fill: '#ffac14',
+                'fill-opacity': 1,
+                stroke: 'black',
+                'stroke-width': 3,
+                'stroke-opacity': 0.3,
+                rx:'100',
+                ry:'50',
+                y: '10',
+                x: '10'
+                });*/
+
+                /*group.attr({
+                    transform: "translate(1,1)"
+                });
+
+                $(window).keydown (function(e) {
+                    var keypressed = e.which;
+                    if (keypressed == 39) {
+                        var xforms = group.attr('transform');
+                        var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(xforms);
+                        var firstX = parts[1],
+                            firstY = parts[2];
+                        firstX2 = parseInt(firstX) + 30;
+                        if (firstX2 < parseInt($('#SvgjsSvg1000').attr('width')) - 220) {
+                            group.animate("50").move(firstX2, firstY);
+                        }
+                        else {
+                            e.preventDefault();
+                        }
+                    }
+                    else if (keypressed == 37) {
+                        var xforms = group.attr('transform');
+                        var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(xforms);
+                        var firstX = parts[1],
+                            firstY = parts[2];
+                        firstX2 = parseInt(firstX) - 30;
+                        if (firstX2 > 0) {
+                        group.animate("50").move(firstX2, firstY);
+                        }
+                        else {
+                            e.preventDefault();
+                        }
+                    }
+                    else if (keypressed == 40) {
+                        e.preventDefault();
+                        var xforms = group.attr('transform');
+                        var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(xforms);
+                        var firstX = parts[1],
+                            firstY = parts[2];
+                        firstY2 = parseInt(firstY) + 30;
+                        if (firstY2 < parseInt($('#SvgjsSvg1000').attr('height')) - 240) {
+                            group.animate("50").move(firstX, firstY2);
+                        }
+                        else {
+                            e.preventDefault();
+                        }
+                    }
+                    else if (keypressed == 38) {
+                        e.preventDefault();
+                        var xforms = group.attr('transform');
+                        var parts  = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(xforms);
+                        var firstX = parts[1],
+                            firstY = parts[2];
+                        firstY2 = parseInt(firstY) - 30;
+                        if (firstY2 > 0) {
+                        group.animate("50").move(firstX, firstY2);
+                        }
+                        else {
+                            e.preventDefault();
+                        }
+                    }
+                });
+
+                /*$('#square').css('left', '10px');
+                $('#square').hover(function(){
+                   $(this).attr('onclick', 'move(this)');
+                });*/
+            });
+        </script>
+        <div class="menu_background"></div>
+        <div class ="chalk"></div>
+            <button type="button" class="button_boot">
+                <span id="first" class="menu_bar"></span>
+                <span id="second" class="menu_bar"></span>
+                <span id="third" class="menu_bar"></span>
+            </button>
+        </div>
+ 	    <a href="/uat" class="box-shadow-menu"></a>
+ 	</body>
+</html>
