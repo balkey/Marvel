@@ -7,17 +7,17 @@ from decorators import async
 mail = Mail()
 
 app = Flask(__name__, static_folder='static', static_url_path='')
-app.secret_key = 'some_secret'
+app.secret_key = 'password'
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = 'balkey80'
-app.config["MAIL_PASSWORD"] = 'Surfinusa2013'
+app.config["MAIL_USERNAME"] = 'youremailaddress'
+app.config["MAIL_PASSWORD"] = 'yourpassword'
 
 mail.init_app(app)
 
-ADMINS = ['balkey80@gmail.com']
+ADMINS = ['youremailaddress']
 if not app.debug:
     import logging
     from logging import Formatter
@@ -56,7 +56,7 @@ if not app.debug:
 
     logger = logging.getLogger()
 
-    gm = TlsSMTPHandler(("smtp.gmail.com", 587), 'Marvel_Reco_Engine@underminer.net', ADMINS, 'Error found!', ('balkey80@gmail.com', 'Surfinusa2013'))
+    gm = TlsSMTPHandler(("smtp.gmail.com", 587), 'Marvel_Reco_Engine@underminer.net', ADMINS, 'Error found!', ('youremailaddress', 'yourpassword'))
     gm.setLevel(logging.ERROR)
     gm.setFormatter(Formatter('''
 Message type:       %(levelname)s
@@ -176,11 +176,11 @@ def hello ():
     endDate = datetime.date(endDate1)
 
     comic_query = {'ts': '1',
-	               'hash': '6243c09440681ae70eb555b28df07b7b',
+	               'hash': 'yourhash',
 		           'format': 'comic',
 		           'formatType': 'comic',
 		           'limit': '1',
-		           'apikey': '9883736779b5eb6deefe9e087644feab',
+		           'apikey': 'yourapikey',
 		           'dateRange': str(startDate)+","+str(endDate)
 		           }
 
@@ -335,7 +335,7 @@ def hello ():
     reco_range = decade_checker2(publication_date1)
 
     recommendation_query = {'ts': '1',
-	                        'hash': '6243c09440681ae70eb555b28df07b7b',
+	                        'hash': 'yourhash',
 		                    'format': 'comic',
 		                    'formatType': 'comic',
 		                    'limit': '9',
@@ -346,7 +346,7 @@ def hello ():
 		                    'sharedAppearances': shared_appearances_list[:10],
 		                    'collaborators': shared_collaborator[:10],
 		                    'dateRange': reco_range,
-		                    'apikey': '9883736779b5eb6deefe9e087644feab',
+		                    'apikey': 'yourapikey',
 		                    }
 
     headers_reco = {'Accept-Encoding': 'gzip'}
@@ -404,8 +404,8 @@ def recommendation():
     import re
 
     comic_query = {'ts': '1',
-	               'hash': '6243c09440681ae70eb555b28df07b7b',
-		           'apikey': '9883736779b5eb6deefe9e087644feab'
+	               'hash': 'yourhash',
+		           'apikey': 'yourapikey'
 		           }
 
     headers = {'Accept-Encoding': 'gzip'}
@@ -543,7 +543,7 @@ def recommendation():
     shared_appearances()
 
     recommendation_query = {'ts': '1',
-	                        'hash': '6243c09440681ae70eb555b28df07b7b',
+	                        'hash': 'yourhash',
 		                    'format': 'comic',
 		                    'formatType': 'comic',
 		                    'limit': '9',
@@ -554,7 +554,7 @@ def recommendation():
 		                    'sharedAppearances': shared_appearances_list[:10],
 		                    'collaborators': shared_collaborator[:10],
 		                    'dateRange': "1940-01-01,2014-05-11",
-		                    'apikey': '9883736779b5eb6deefe9e087644feab',
+		                    'apikey': 'yourapikey',
 		                    }
 
     headers_reco = {'Accept-Encoding': 'gzip'}
@@ -628,12 +628,12 @@ def uat ():
     endDate = datetime.date(endDate1)
 
     comic_query = {'ts': '1',
-	               'hash': '6243c09440681ae70eb555b28df07b7b',
+	               'hash': 'yourhash',
 		           'format': 'comic',
 		           'formatType': 'comic',
 		           'noVariants': 'true',
 		           'limit': '5',
-		           'apikey': '9883736779b5eb6deefe9e087644feab',
+		           'apikey': 'yourapikey',
 		           'dateRange': str(startDate)+","+str(endDate)
 		           }
 
@@ -823,7 +823,7 @@ def uat ():
         reco_range = "1940-01-01,2014-05-13"
 
     recommendation_query = {'ts': '1',
-	                        'hash': '6243c09440681ae70eb555b28df07b7b',
+	                        'hash': 'yourhash',
 		                    'format': 'comic',
 		                    'formatType': 'comic',
 		                    'limit': '30',
@@ -835,7 +835,7 @@ def uat ():
 		                    'series': series_filter,
 		                    'collaborators': shared_collaborator[:10],
 		                    'dateRange': reco_range,
-		                    'apikey': '9883736779b5eb6deefe9e087644feab',
+		                    'apikey': 'yourapikey',
 		                    }
 
     headers_reco = {'Accept-Encoding': 'gzip'}
@@ -919,8 +919,8 @@ def search():
         issue_search = 1
 
     comic_query = {'ts': '1',
-	               'hash': '6243c09440681ae70eb555b28df07b7b',
-		           'apikey': '9883736779b5eb6deefe9e087644feab',
+	               'hash': 'yourhash',
+		           'apikey': 'yourapikey',
 		           'noVariants': 'true',
 		           'title': series_search,
 		           'issueNumber': issue_search
@@ -1123,7 +1123,7 @@ def search():
             reco_range = "1940-01-01,2014-05-13"
 
         recommendation_query = {'ts': '1',
-	                            'hash': '6243c09440681ae70eb555b28df07b7b',
+	                            'hash': 'yourhash',
 		                        'format': 'comic',
 		                        'formatType': 'comic',
 		                        'limit': '30',
@@ -1135,7 +1135,7 @@ def search():
 		                        'series': series_filter,
 		                        'collaborators': shared_collaborator[:10],
 		                        'dateRange': reco_range,
-		                        'apikey': '9883736779b5eb6deefe9e087644feab',
+		                        'apikey': 'yourapikey',
 		                        }
 
         headers_reco = {'Accept-Encoding': 'gzip'}
@@ -1229,7 +1229,7 @@ From: %s <%s>
 
 %s
     """ % (request.json["name"], request.json["email"], request.json["message"])
-        send_email(request.json["subject"], "balkey80@gmail.com", ["balkey80@gmail.com"], text)
+        send_email(request.json["subject"], "youremail", ["youremail"], text)
         return jsonify(result={"status": 200})
     else:
         return render_template('404.html')
@@ -1258,7 +1258,7 @@ Characters already present in this issue:
 
 %s
     """ % (request.json["issue"], request.json["comic_id"], request.json["message"], request.json["character_list"])
-        send_email(request.json["subject"], "balkey80@gmail.com", ["balkey80@gmail.com"], text)
+        send_email(request.json["subject"], "youremail", ["youremail"], text)
         return jsonify(result={"status": 200})
     else:
         return render_template('404.html')
